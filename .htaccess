@@ -1,0 +1,23 @@
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # The project root is web-served (XAMPP), so never expose project internals:
+    # hidden files (.env, .git, ...), source folders, logs, dependencies and manifests.
+    RewriteRule (^|/)\. - [F,L]
+    RewriteRule ^(app|bootstrap|config|database|resources|routes|storage|tests|vendor|node_modules)(/|$) - [F,L]
+    RewriteRule ^(artisan|composer\.(json|lock)|package(-lock)?\.json|phpunit\.xml|vite\.config\.js|[^/]+\.md)$ - [F,L]
+
+    # Everything else goes through the Laravel front controller.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Fallback if mod_rewrite is ever disabled: still refuse hidden and manifest files.
+<FilesMatch "^(\..*|artisan|composer\.(json|lock)|package(-lock)?\.json|phpunit\.xml|.*\.md)$">
+    Require all denied
+</FilesMatch>

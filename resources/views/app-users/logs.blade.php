@@ -1,0 +1,7 @@
+@extends('layouts.app')
+@section('content')
+<header class="topbar"><div style="display:flex;align-items:flex-start;gap:12px"><button class="icon-btn menu-btn" data-menu-toggle aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div><p class="eyebrow">App user activity</p><h1>{{ $appUser->name }} · Logs</h1><p class="sub">User ID #{{ $appUser->id }} · {{ $appUser->email }} · {{ $logs->count() }} events</p></div></div><div class="top-actions"><button class="icon-btn" data-theme-toggle aria-label="Toggle dark mode"></button></div></header>
+<section class="table-card"><div class="table-head"><div><h2>Activity history</h2><p class="sub">IP, device and app information</p></div><a class="logout" href="{{ route('app-users.index') }}" style="text-decoration:none">Back to users</a></div><div class="table-wrap"><table><thead><tr><th>TIME</th><th>EVENT</th><th>IP ADDRESS</th><th>PLATFORM</th><th>DEVICE</th><th>APP VERSION</th></tr></thead><tbody>
+@forelse($logs as $log)<tr><td>{{ $log->created_at->format('d M Y, H:i') }}</td><td><span class="badge">{{ $log->event }}</span></td><td>{{ $log->ip_address ?: '—' }}</td><td>{{ $log->platform ?: '—' }}</td><td>{{ $log->device_model ?: '—' }}</td><td>{{ $log->app_version ?: '—' }}</td></tr>@empty<tr><td colspan="6">No activity logs found.</td></tr>@endforelse
+</tbody></table></div></section>
+@endsection
