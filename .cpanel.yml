@@ -1,0 +1,11 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/crebfizy/public_html
+    - export PHP=/opt/cpanel/ea-php83/root/usr/bin/php
+    # Copy code only. No --delete, and .env / storage / vendor / uploads on the server are never overwritten.
+    - /bin/rsync -a --exclude='.git' --exclude='.env' --exclude='/storage' --exclude='/vendor' --exclude='/node_modules' --exclude='error_log' ./ $DEPLOYPATH/
+    - /bin/mkdir -p $DEPLOYPATH/storage/framework/cache $DEPLOYPATH/storage/framework/sessions $DEPLOYPATH/storage/framework/views $DEPLOYPATH/storage/logs $DEPLOYPATH/storage/app/public
+    - cd $DEPLOYPATH && $PHP /opt/cpanel/composer/bin/composer install --no-dev --optimize-autoloader --no-interaction
+    - cd $DEPLOYPATH && $PHP artisan migrate --force
+    - cd $DEPLOYPATH && $PHP artisan optimize:clear
