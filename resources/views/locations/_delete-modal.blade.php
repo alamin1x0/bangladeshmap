@@ -34,7 +34,7 @@
     .dm-confirm:hover{background:#b42318}
     .dm-confirm[disabled]{opacity:.6;cursor:wait}
 </style>
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
     (function () {
         var modal = document.getElementById('delete-modal');
         if (!modal) return;

@@ -53,7 +53,7 @@
     </form>
 </section>
 @if($type === 'upazilas')
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
     (function () {
         var sel = document.getElementById('district_id'), box = document.getElementById('new-district');
         function sync() {

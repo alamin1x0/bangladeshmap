@@ -67,12 +67,17 @@
         <div id="dl-children-wrap" hidden><h3>Deleted with it</h3><ul id="dl-children"></ul></div>
     </div>
 </div>
-<script type="application/json" id="dl-data">@json($logs->mapWithKeys(fn ($l) => [$l->id => [
-    'title' => ($l->entity_name ?: $l->typeLabel()),
-    'meta' => $l->typeLabel().' · deleted by '.($l->admin_name ?: 'unknown').' on '.$l->created_at->format('d M Y, h:i A').($l->ip_address ? ' · '.$l->ip_address : ''),
-    'record' => $l->snapshot['record'] ?? [],
-    'children' => $l->snapshot['children'] ?? [],
-]]))</script>
+@php
+    $dlData = $logs->mapWithKeys(function ($l) {
+        return [$l->id => [
+            'title' => $l->entity_name ?: $l->typeLabel(),
+            'meta' => $l->typeLabel().' · deleted by '.($l->admin_name ?: 'unknown').' on '.$l->created_at->format('d M Y, h:i A').($l->ip_address ? ' · '.$l->ip_address : ''),
+            'record' => $l->snapshot['record'] ?? [],
+            'children' => $l->snapshot['children'] ?? [],
+        ]];
+    });
+@endphp
+<script type="application/json" id="dl-data" nonce="{{ Vite::cspNonce() }}">@json($dlData)</script>
 <style>
     .dl-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
     .dl-chip{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font-size:12.5px;text-decoration:none}
@@ -92,7 +97,7 @@
     #dl-fields dt{color:var(--muted)} #dl-fields dd{margin:0;color:var(--ink);word-break:break-word}
     #dl-children{margin:0;padding-left:18px;font-size:13px;color:var(--ink)}
 </style>
-<script>
+<script nonce="{{ Vite::cspNonce() }}">
 (function () {
     var data = JSON.parse(document.getElementById('dl-data').textContent), modal = document.getElementById('dl-modal');
     function close() { modal.style.display = 'none'; }
